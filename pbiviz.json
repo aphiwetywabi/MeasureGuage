@@ -1,0 +1,24 @@
+{
+  "visual": {
+    "name": "objTest",
+    "displayName": "ObjTest",
+    "guid": "PBI_CV_7E0C75FC_084D_40C1_838D_881B1B88E6F5",
+    "visualClassName": "Visual",
+    "version": "1.0.0",
+    "description": "",
+    "supportUrl": "",
+    "gitHubUrl": ""
+  },
+  "apiVersion": "1.3.0",
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": "dependencies.json"
+}
