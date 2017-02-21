@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Data Stream Pusher</title>
+</head>
+
+<body>
+    <label for="cakesEaten">Cakes Eaten</label>
+    <input type="number" id="cakesEaten" />
+    <button onclick="pushData()">Send</button>
+    <ul id="results">
+    </ul>
+    <script>
+        const url = "https://api.powerbi.com/beta/72f988bf-86f1-41af-91ab-2d7cd011db47/datasets/5fa29995-63e2-4a6e-baba-c4739d392ba3/rows?key=2%2FIfXj0fMqQ90rsINY14kqeov5%2BJzpda2%2FRCHJYVaRXa8ylH3SbLqxwoDlH2VsVv0Mtm6N7lwml2zFb%2Bk%2Bh%2F5Q%3D%3D";
+
+        function pushData() {
+            const dateTime = new Date();
+            const cakesEaten = document.querySelector("#cakesEaten");
+
+            let message = [{
+                "Date": dateTime.toJSON(),
+                "CakesEaten": parseInt(cakesEaten.value)
+            }];
+
+            const jsonMessage = JSON.stringify(message);
+            console.log(jsonMessage);
+            
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: jsonMessage
+            })
+            .then((data) => data.json())
+            .then((json) => {
+                console.log("json", json);
+                document.querySelector("#results").innerHTML += `<li>${json}</li>`;
+            })
+            .catch((error) => {
+                console.log("error", error);
+                document.querySelector("#results").innerHTML += `<li>${error}</li>`;
+            });
+        }
+    </script>
+</body>
+
+</html>
