@@ -14,10 +14,10 @@ module powerbi.extensibility.visual {
 
         let viewModel: ViewModel = {
             dataPoints: []
-        };        
+        };
 
-        if (!options.dataViews || 
-            !options.dataViews[0] || 
+        if (!options.dataViews ||
+            !options.dataViews[0] ||
             !options.dataViews[0].categorical ||
             !options.dataViews[0].categorical.categories ||
             !options.dataViews[0].categorical.categories[0].source ||
@@ -73,73 +73,30 @@ module powerbi.extensibility.visual {
 
         public update(options: VisualUpdateOptions) {
 
-            this.target.innerHTML = "<div id='chart_div'></div>";
-
-            this.loadParameters(options);
-
-            // if there is no data, show placerholder
-            if (options.dataViews.length === 0) {
-                this.loadPlaceholderGauge(options);
-            }
-            else {
-                this.loadGauge(options);
-            }
-
-        }
-
-        loadParameters(options: VisualUpdateOptions) {
-
-        }
-
-        loadGauge(options: VisualUpdateOptions) {
-
+            let parameters = this.loadParameters(options);
             let data = transformData(options);
 
+            this.target.innerHTML = "<div id='chart_div'></div>";
+
+            const width = options.viewport.width;
+            const height = options.viewport.height;
+
             if (data.dataPoints.length === 0) {
-                this.target.innerHTML = "<p>Missing data</p>";
-                return;
+                this.drawGauge("Placeholder", 30, width, height, parameters);
             }
+            else {
+                let sortedDataPoints = data.dataPoints.sort((a, b) => (a > b) ? -1 : 1);
+                var displayDataPoint = data.dataPoints[0];
 
-            let sortedDataPoints = data.dataPoints.sort((a, b) => (a > b) ? -1 : 1);
-            var displayDataPoint = data.dataPoints[0];
-
-            this.loadScript("https://www.gstatic.com/charts/loader.js",
-                function () {
-                    google.charts.load('current', { packages: ['gauge'] });
-                    google.charts.setOnLoadCallback(drawChart);
-
-                    function drawChart() {
-                        var data = google.visualization.arrayToDataTable([
-                            ['Label', 'Value'],
-                            [displayDataPoint.axis, displayDataPoint.value]
-                        ]);
-
-                        /*
-                                            var options = {
-                                                width: width, height: height,
-                                                redFrom: redStartInt, redTo: redEndInt,
-                                                redColor: redColorValue,
-                                                yellowFrom: yellowStartInt, yellowTo: yellowEndInt,
-                                                yellowColor: yellowColorValue,
-                                                greenFrom: greenStartInt, greenTo: greenEndInt,
-                                                greenColor: greenColorValue,
-                                                minorTicks: numberTicks,
-                                                max: maximumInt,
-                                                min: minimumInt
-                        
-                                            };
-                                            */
-
-                        var chart = new google.visualization.Gauge(document.querySelector('#chart_div'));
-                        chart.draw(data, options);
-                    }
-                });
-
+                this.drawGauge(displayDataPoint.axis, new Number(displayDataPoint).valueOf(), width, height, parameters);
+            }
         }
 
-        loadPlaceholderGauge(options: VisualUpdateOptions) {
-            const height = options.viewport.height;
-            const width = options.viewport.width;
+        loadParameters(options: VisualUpdateOptions): Object {
+            return null;
+        }
+
+        drawGauge(label: string, value: number, width: number, height: number, parameters: Object) {
 
             this.loadScript("https://www.gstatic.com/charts/loader.js",
                 function () {
@@ -149,7 +106,7 @@ module powerbi.extensibility.visual {
                     function drawChart() {
                         var data = google.visualization.arrayToDataTable([
                             ['Label', 'Value'],
-                            ["Placeholder", 30]
+                            [label, value]
                         ]);
 
                         var options = {
@@ -167,7 +124,6 @@ module powerbi.extensibility.visual {
 
         loadScript(url: string, callback: () => void) {
 
-            // is the script loaded?
             const scripts = document.querySelectorAll("script");
             const sources = [];
 

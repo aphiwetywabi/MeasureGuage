@@ -4,47 +4,117 @@
 <head>
     <meta charset="UTF-8">
     <title>Data Stream Pusher</title>
+    <style>
+        html {
+            box-sizing: border-box;
+            background: #0083FF;
+            font-family: 'Arial';
+            font-size: 20px;
+            font-weight: 200;
+        }
+        
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+        
+        input {
+            width: 100%;
+            padding: 20px;
+        }
+        
+        .push-form {
+            max-width: 400px;
+            margin: 50px auto;
+        }
+        
+        input.cakesEaten {
+            margin: 0;
+            text-align: center;
+            outline: 0;
+            border: 10px solid #F7F7F7;
+            width: 120%;
+            left: -10%;
+            position: relative;
+            top: 10px;
+            z-index: 2;
+            border-radius: 5px;
+            font-size: 40px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.19);
+        }
+        
+        li {
+            font-size: 40px;
+        }
+
+        button {
+            width: 100%;            
+        }
+        
+        .btn {
+            display: inline-block;
+            margin-top:20px;
+            margin-bottom: 0;
+            font-weight: normal;
+            text-align: center;
+            vertical-align: middle;
+            touch-action: manipulation;
+            cursor: pointer;
+            background-image: none;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            padding: 10px 15px;
+            font-size: 15px;
+            line-height: 1.42857143;
+            border-radius: 4px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
 </head>
 
 <body>
-    <label for="cakesEaten">Cakes Eaten</label>
-    <input type="number" id="cakesEaten" />
-    <button onclick="pushData()">Send</button>
-    <ul id="results">
-    </ul>
-    <script>
-        const url = "https://api.powerbi.com/beta/72f988bf-86f1-41af-91ab-2d7cd011db47/datasets/5fa29995-63e2-4a6e-baba-c4739d392ba3/rows?key=2%2FIfXj0fMqQ90rsINY14kqeov5%2BJzpda2%2FRCHJYVaRXa8ylH3SbLqxwoDlH2VsVv0Mtm6N7lwml2zFb%2Bk%2Bh%2F5Q%3D%3D";
+    <div class="push-form">
+        <input type="number" id="cakesEaten" class="cakesEaten" placeholder="Cakes Eaten" />
+        <button class="btn" onclick="pushData()">Send</button>
+        <ul id="results">
+        </ul>
+        </form>
+        <script>
+            const url = "https://api.powerbi.com/beta/72f988bf-86f1-41af-91ab-2d7cd011db47/datasets/5fa29995-63e2-4a6e-baba-c4739d392ba3/rows?key=2%2FIfXj0fMqQ90rsINY14kqeov5%2BJzpda2%2FRCHJYVaRXa8ylH3SbLqxwoDlH2VsVv0Mtm6N7lwml2zFb%2Bk%2Bh%2F5Q%3D%3D";
 
-        function pushData() {
-            const dateTime = new Date();
-            const cakesEaten = document.querySelector("#cakesEaten");
+            function pushData() {
+                const dateTime = new Date();
+                const cakesEaten = document.querySelector("#cakesEaten");
 
-            let message = [{
-                "Date": dateTime.toJSON(),
-                "CakesEaten": parseInt(cakesEaten.value)
-            }];
+                let message = [{
+                    "Date": dateTime.toJSON(),
+                    "CakesEaten": parseInt(cakesEaten.value)
+                }];
 
-            const jsonMessage = JSON.stringify(message);
-            console.log(jsonMessage);
-            
-            fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-type": "application/json"
-                },
-                body: jsonMessage
-            })
-            .then((data) => data.json())
-            .then((json) => {
-                console.log("json", json);
-                document.querySelector("#results").innerHTML += `<li>${json}</li>`;
-            })
-            .catch((error) => {
-                console.log("error", error);
-                document.querySelector("#results").innerHTML += `<li>${error}</li>`;
-            });
-        }
-    </script>
+                const jsonMessage = JSON.stringify(message);
+                console.log(jsonMessage);
+
+                fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: jsonMessage
+                })
+                    .then((data) => {
+                        console.log("data", data)
+                        document.querySelector("#results").innerHTML += "<li>Sent</li>";
+                    })
+                    .catch((error) => {
+                        console.log("error", error);
+                        document.querySelector("#results").innerHTML += `<li>${error}</li>`;
+                    });
+            }
+        </script>
 </body>
 
 </html>
