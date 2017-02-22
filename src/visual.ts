@@ -3,11 +3,17 @@ module powerbi.extensibility.visual {
 
     interface DataPoint {
         axis: string;
-        value: PrimitiveValue;
+        value: number;
     }
 
     interface ViewModel {
         dataPoints: DataPoint[];
+    }
+
+    interface Parameters {
+        gaugeLabel: string;
+        minimum: number;
+        maximum: number;
     }
 
     function transformData(options: VisualUpdateOptions): ViewModel {
@@ -32,8 +38,8 @@ module powerbi.extensibility.visual {
 
         for (var i = 0; i < category.values.length; i++) {
             let dataPoint: DataPoint = {
-                axis: category.values[i] + '',
-                value: dataValues.values[i]
+                axis: <string>category.values[i],
+                value: <number>dataValues.values[i]
             }
 
             viewModel.dataPoints.push(dataPoint);
@@ -45,27 +51,7 @@ module powerbi.extensibility.visual {
     export class Visual implements IVisual {
         private target: HTMLElement;
 
-        private greenStart: string;
-        private greenEnd: string;
-        private greenColorText: string;
-
-        private yellowStart: string;
-        private yellowEnd: string;
-        private yellowColorText: string;
-
-        private redStart: string;
-        private redEnd: string;
-        private redColorText: string;
-
-        private maximum: string;
-        private minimum: string;
-
-        private title: string;
-
-        private height: number;
-        private width: number;
-
-        private tickValue: string;
+        private parameters: Parameters;
 
         constructor(options: VisualConstructorOptions) {
             this.target = options.element;
@@ -73,8 +59,8 @@ module powerbi.extensibility.visual {
 
         public update(options: VisualUpdateOptions) {
 
-            let parameters = this.loadParameters(options);
-            let data = transformData(options);
+            this.loadParameters(options);
+            const data = transformData(options);
 
             this.target.innerHTML = "<div id='chart_div'></div>";
 
@@ -82,21 +68,46 @@ module powerbi.extensibility.visual {
             const height = options.viewport.height;
 
             if (data.dataPoints.length === 0) {
-                this.drawGauge("Placeholder", 30, width, height, parameters);
+                this.drawGauge(0, width, height, this.parameters);
             }
             else {
-                let sortedDataPoints = data.dataPoints.sort((a, b) => (a > b) ? -1 : 1);
-                var displayDataPoint = data.dataPoints[0];
+                const sortedDataPoints = data.dataPoints.sort((a, b) => (a > b) ? -1 : 1);
+                const displayDataPoint = data.dataPoints[0];
 
-                this.drawGauge(displayDataPoint.axis, new Number(displayDataPoint).valueOf(), width, height, parameters);
+                this.drawGauge(displayDataPoint.value, width, height, this.parameters);
             }
         }
 
-        loadParameters(options: VisualUpdateOptions): Object {
-            return null;
+        loadParameters(options: VisualUpdateOptions) {
+
+            let defaultParameters: Parameters = {
+                gaugeLabel: "",
+                minimum: 0,
+                maximum: 100
+            };
+            
+            debugger;
+
+            if (!options.dataViews ||
+                !options.dataViews[0] ||
+                !options.dataViews[0].metadata ||
+                !options.dataViews[0].metadata.objects) {
+                this.parameters = defaultParameters;
+                return;
+            }
+
+            const properties = options.dataViews[0].metadata.objects["customProperties"];
+
+            defaultParameters.gaugeLabel = <string>properties["gaugeLabel"];
+            defaultParameters.minimum = <number>properties["minimum"];
+            defaultParameters.maximum = <number>properties["maximum"];
+
+            debugger;
+
+            this.parameters = defaultParameters;
         }
 
-        drawGauge(label: string, value: number, width: number, height: number, parameters: Object) {
+        drawGauge(value: number, width: number, height: number, parameters: Parameters) {
 
             this.loadScript("https://www.gstatic.com/charts/loader.js",
                 function () {
@@ -104,19 +115,19 @@ module powerbi.extensibility.visual {
                     google.charts.setOnLoadCallback(drawChart);
 
                     function drawChart() {
-                        var data = google.visualization.arrayToDataTable([
+                        const data = google.visualization.arrayToDataTable([
                             ['Label', 'Value'],
-                            [label, value]
+                            [parameters.gaugeLabel, value]
                         ]);
 
-                        var options = {
+                        const options = {
                             width: width,
                             height: height,
-                            min: 0,
-                            max: 100
+                            min: parameters.minimum,
+                            max: parameters.maximum
                         };
 
-                        var chart = new google.visualization.Gauge(document.querySelector('#chart_div'));
+                        const chart = new google.visualization.Gauge(document.querySelector('#chart_div'));
                         chart.draw(data, options);
                     }
                 });
@@ -145,36 +156,36 @@ module powerbi.extensibility.visual {
                 callback();
             }
         }
-        /*
-                public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
-                    let objectName = options.objectName;
-                    let objectEnumeration: VisualObjectInstance[] = [];
-        
-        
-                    if (objectName === "customProperties") {
-                        objectEnumeration.push({
-                            objectName: objectName,
-                            properties: {
-                                gaugeTitle: this.title,
-                                maximumValue: this.maximum,
-                                minimumValue: this.minimum,
-                                redStartValue: this.redStart,
-                                redEndValue: this.redEnd,
-                                redColor: this.redColorText,
-                                yellowStartValue: this.yellowStart,
-                                yellowEndValue: this.yellowEnd,
-                                yellowColor: this.yellowColorText,
-                                greenStartValue: this.greenStart,
-                                greenEndValue: this.greenEnd,
-                                greenColor: this.greenColorText,
-                                minorTickValue: this.tickValue
-                            },
-                            selector: null
-                        });
-                    }
-        
-                    return objectEnumeration;
-                }
-                */
+
+        public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
+            let objectName = options.objectName;
+            let objectEnumeration: VisualObjectInstance[] = [];
+
+            if (objectName === "customProperties") {
+                objectEnumeration.push({
+                    objectName: objectName,
+                    properties: {
+                        gaugeLabel: this.parameters.gaugeLabel,
+                        minimum: this.parameters.minimum,
+                        maximum: this.parameters.maximum
+                        // maximumValue: this.maximum,
+                        // minimumValue: this.minimum,
+                        // redStartValue: this.redStart,
+                        // redEndValue: this.redEnd,
+                        // redColor: this.redColorText,
+                        // yellowStartValue: this.yellowStart,
+                        // yellowEndValue: this.yellowEnd,
+                        // yellowColor: this.yellowColorText,
+                        // greenStartValue: this.greenStart,
+                        // greenEndValue: this.greenEnd,
+                        // greenColor: this.greenColorText,
+                        // minorTickValue: this.tickValue
+                    },
+                    selector: null
+                });
+            }
+
+            return objectEnumeration;
+        }
     }
 }

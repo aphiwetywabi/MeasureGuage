@@ -43,118 +43,26 @@
     ],
     "objects": {
         "customProperties": {
-            "displayName": "Properties",
+            "displayName": "Gauge Settings",
             "properties": {
-                "defaultTitle": {
-                    "displayName": "Default Title",
+                "gaugeLabel": {
+                    "displayName": "Label",
                     "type": {
                         "text": true
                     }
                 },
-                "redColor": {
-                    "displayName": "Red Color",
-                    "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
-                    }
-                },
-                "yellowColor": {
-                    "displayName": "Yellow Color ",
-                    "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
-                    }
-                },
-                "greenColor": {
-                    "displayName": "Green Color",
-                    "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
-                    }
-                },
-                "gaugeMaxValue": {
-                    "displayName": "Maximum",
-                    "type": {
-                        "text": true
-                    }
-                },
-                "yellowStartValue": {
-                    "displayName": "Yellow From",
-                    "type": {
-                       "text": true
-                    }
-                },
-                "yellowEndValue": {
-                    "displayName": "Yellow To",
-                    "type": {
-                       "text": true
-                    }
-                },
-                 "redStartValue": {
-                    "displayName": "Red From",
-                    "type": {
-                       "text": true
-                    }
-                },
-                "redEndValue": {
-                    "displayName": "Red To",
-                    "type": {
-                       "text": true
-                    }
-                },
-                "maximumValue": {
-                    "displayName": "Maximum",
-                    "type": {
-                       "text": true
-                    }
-                },
-                "minimumValue": {
+                "minimum": {
                     "displayName": "Minimum",
                     "type": {
-                       "text": true
+                        "numeric": true
                     }
                 },
-                "temperatureValue": {
-                    "displayName": "Temperature",
+                "maximum": {
+                    "displayName": "Maximum",
                     "type": {
-                       "text": true
-                    }
-                },
-                "gaugeTitle": {
-                    "displayName": "Title text",
-                    "type": {
-                       "text": true
-                    }
-                },
-                 "greenStartValue": {
-                    "displayName": "Green from",
-                    "type": {
-                       "text": true
-                    }
-                },
-                 "greenEndValue": {
-                    "displayName": "Green to",
-                    "type": {
-                       "text": true
-                    }
-                },
-                 "minorTickValue": {
-                    "displayName": "Tick number",
-                    "type": {
-                       "text": true
+                        "numeric": true
                     }
                 }
-            
-                
             }
         }
     }
