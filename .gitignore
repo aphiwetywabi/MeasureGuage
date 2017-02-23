@@ -1,3 +1,6 @@
-/.tmp
-/.vscode
-.api
+/MeasureGauge/.tmp
+/gaugejsdemo/.tmp
+/MeasureGauge/.vscode
+/gaugejsdemo/.vscode
+/MeasureGauge/.api
+/gaugejsdemo/.api

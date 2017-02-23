@@ -1,0 +1,26 @@
+{
+  "visual": {
+    "name": "gaugejsdemo",
+    "displayName": "gaugejsdemo",
+    "guid": "PBI_CV_BB66858E_A8B6_402E_B506_EE3D002CFD8F",
+    "visualClassName": "Visual",
+    "version": "1.0.0",
+    "description": "",
+    "supportUrl": "",
+    "gitHubUrl": ""
+  },
+  "apiVersion": "1.3.0",
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [
+    "src/gauge.min.js"
+  ],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": "dependencies.json"
+}
